@@ -3,7 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineTheater.Logic", "OnlineTheater.Logic\OnlineTheater.Logic.csproj", "{060A94D7-8D4E-4D1B-91E8-A75A7E12F3E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineTheater.Api", "OnlineTheater.Api\OnlineTheater.Api.csproj", "{C8988EEB-BFC7-4EA6-B74D-8043D5506845}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{060A94D7-8D4E-4D1B-91E8-A75A7E12F3E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{060A94D7-8D4E-4D1B-91E8-A75A7E12F3E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{060A94D7-8D4E-4D1B-91E8-A75A7E12F3E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{060A94D7-8D4E-4D1B-91E8-A75A7E12F3E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8988EEB-BFC7-4EA6-B74D-8043D5506845}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8988EEB-BFC7-4EA6-B74D-8043D5506845}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8988EEB-BFC7-4EA6-B74D-8043D5506845}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8988EEB-BFC7-4EA6-B74D-8043D5506845}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
