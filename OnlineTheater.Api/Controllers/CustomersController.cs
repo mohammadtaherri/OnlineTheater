@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using OnlineTheater.Api.Dtos;
 using OnlineTheater.Logic.Entities;
-using OnlineTheater.Logic.Repositories;
 using OnlineTheater.Logic.Services;
 using OnlineTheater.Logic.Utils;
 
@@ -22,27 +21,58 @@ public class CustomersController : ControllerBase
 	}
 
 	[HttpGet]
-	[Route("{id}")]
+	[Route("{id:long}")]
 	public IActionResult GetById([FromRoute] long id)
 	{
 		Customer? customer = _unitOfWork.Customers.GetById(id);
 		if (customer is null)
-		{
 			return NotFound();
-		}
 
-		return Ok(customer);
+		var customerDto = new CustomerDto
+		{
+			Id = customer.Id,
+			Name = customer.Name,
+			Email = customer.Email,
+			Status = customer.Status.ToString(),
+			StatusExpirationDate = customer.StatusExpirationDate,
+			MoneySpent = customer.MoneySpent,
+			PurchasedMovies = customer.PurchasedMovies.Select(pm => new PurchasedMovieDto
+			{
+				Price = pm.Price,
+				PurchaseDate = pm.PurchaseDate,
+				ExpirationDate = pm.ExpirationDate,
+				Movie = new MovieDto
+				{
+					Id = pm.MovieId,
+					Name = pm.Movie.Name
+				}
+			}).ToList(),
+		};
+
+		return Ok(customerDto);
 	}
 
 	[HttpGet]
 	public IActionResult GetAll()
 	{
 		IReadOnlyList<Customer> customers = _unitOfWork.Customers.GetAll();
-		return Ok(customers);
+
+		var customerDtos = customers
+			.Select(c => new CustomerInListDto
+			{
+				Id = c.Id,
+				Name = c.Name,
+				Email = c.Email,
+				Status = c.Status.ToString(),
+				StatusExpirationDate = c.StatusExpirationDate,
+				MoneySpent = c.MoneySpent,
+			})
+			.ToList();
+		return Ok(customerDtos);
 	}
 
 	[HttpPost]
-	public IActionResult Create([FromBody] Customer item)
+	public IActionResult Create([FromBody] CreateCustomerDto dto)
 	{
 		try
 		{
@@ -51,13 +81,21 @@ public class CustomersController : ControllerBase
 				return BadRequest(ModelState);
 			}
 
-			if (_unitOfWork.Customers.GetByEmail(item.Email) is not null)
+			if (_unitOfWork.Customers.GetByEmail(dto.Email) is not null)
 			{
-				return BadRequest("Email is already in use: " + item.Email);
+				return BadRequest("Email is already in use: " + dto.Email);
 			}
 
-			item.Status = CustomerStatus.Regular;
-			_unitOfWork.Customers.Add(item);
+			var newCustomer = new Customer
+			{
+				Name = dto.Name,
+				Email = dto.Email,
+				Status = CustomerStatus.Regular,
+				MoneySpent = 0,
+				StatusExpirationDate = null,
+			};
+
+			_unitOfWork.Customers.Add(newCustomer);
 			_unitOfWork.SaveChanges();
 
 			return Ok();
@@ -69,8 +107,8 @@ public class CustomersController : ControllerBase
 	}
 
 	[HttpPut]
-	[Route("{id}")]
-	public IActionResult Update([FromRoute] long id, [FromBody] Customer item)
+	[Route("{id:long}")]
+	public IActionResult Update([FromRoute] long id, [FromBody] UpdateCustomerDto dto)
 	{
 		try
 		{
@@ -85,7 +123,7 @@ public class CustomersController : ControllerBase
 				return BadRequest("Invalid customer id: " + id);
 			}
 
-			customer.Name = item.Name;
+			customer.Name = dto.Name;
 			_unitOfWork.SaveChanges();
 
 			return Ok();
@@ -97,7 +135,7 @@ public class CustomersController : ControllerBase
 	}
 
 	[HttpPost]
-	[Route("{id}/movies")]
+	[Route("{id:long}/movies")]
 	public IActionResult PurchaseMovie([FromRoute] long id, [FromBody] long movieId)
 	{
 		try
@@ -132,7 +170,7 @@ public class CustomersController : ControllerBase
 	}
 
 	[HttpPost]
-	[Route("{id}/promotion")]
+	[Route("{id:long}/promotion")]
 	public IActionResult PromoteCustomer([FromRoute] long id)
 	{
 		try

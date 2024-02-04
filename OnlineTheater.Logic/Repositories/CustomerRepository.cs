@@ -13,9 +13,7 @@ public class CustomerRepository : Repository<Customer>
 
 	public IReadOnlyList<Customer> GetAll()
 	{
-		return _dbSet
-			.Include(c => c.PurchasedMovies)
-			.ToList();
+		return _dbSet.ToList();
 	}
 
 	public Customer? GetByEmail(string email)
