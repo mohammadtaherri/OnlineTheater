@@ -90,14 +90,9 @@ public class CustomersController : ControllerBase
 				return BadRequest("Email is already in use: " + dto.Email);
 			}
 
-			var newCustomer = new Customer
-			{
-				Name = customerNameOrError.Value,
-				Email = emailOrError.Value,
-				Status = CustomerStatus.Regular,
-				MoneySpent = Dollars.Of(0),
-				StatusExpirationDate = ExpirationDate.Infinite,
-			};
+			var newCustomer = new Customer(
+				customerNameOrError.Value, 
+				emailOrError.Value);
 
 			_unitOfWork.Customers.Add(newCustomer);
 			_unitOfWork.SaveChanges();

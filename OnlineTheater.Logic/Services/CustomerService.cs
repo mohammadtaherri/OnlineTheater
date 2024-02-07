@@ -20,17 +20,7 @@ public class CustomerService
 			customer.StatusExpirationDate, 
 			movie.LicensingModel);
 
-		var purchasedMovie = new PurchasedMovie
-		{
-			MovieId = movie.Id,
-			CustomerId = customer.Id,
-			ExpirationDate = expirationDate,
-			Price = price,
-			PurchaseDate = DateTime.Now,
-		};
-
-		customer.PurchasedMovies.Add(purchasedMovie);
-		customer.MoneySpent += price;
+		customer.AddPurchasedMovie(movie, expirationDate, price);
 	}
 
 	private Dollars CalculatePrice(
