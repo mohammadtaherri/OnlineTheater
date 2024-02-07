@@ -23,12 +23,12 @@ public class Customer : Entity
 		_purchasedMovies = new List<PurchasedMovie>();
 	}
 
-	public virtual bool CanPurchasedMovie(Movie movie)
+	public bool CanPurchaseMovie(Movie movie)
 	{
 		return PurchasedMovies.Any(x => x.Movie == movie && !x.ExpirationDate.IsExpired);
 	}
 
-	public virtual void PurchaseMovie(Movie movie)
+	public void PurchaseMovie(Movie movie)
 	{
 		if (CanPurchasedMovie(movie))
 			throw new Exception();
@@ -42,7 +42,7 @@ public class Customer : Entity
 		MoneySpent += price;
 	}
 
-	public virtual Result CanPromote()
+	public Result CanPromote()
 	{
 		if (Status.IsAdvanced)
 			return Result.Fail("The customer already has the Advanced status");
@@ -57,7 +57,7 @@ public class Customer : Entity
 		return Result.Ok();
 	}
 
-	public virtual void Promote()
+	public void Promote()
 	{
 		if (CanPromote().IsFailure)
 			throw new Exception();
