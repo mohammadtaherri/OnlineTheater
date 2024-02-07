@@ -45,7 +45,7 @@ public class CustomersController : ControllerBase
 				ExpirationDate = pm.ExpirationDate,
 				Movie = new MovieDto
 				{
-					Id = pm.MovieId,
+					Id = pm.Movie.Id,
 					Name = pm.Movie.Name
 				}
 			}).ToList(),
@@ -150,7 +150,7 @@ public class CustomersController : ControllerBase
 				return BadRequest("Invalid customer id: " + id);
 			}
 
-			if (customer.PurchasedMovies.Any(x => x.MovieId == movie.Id && !x.ExpirationDate.IsExpired))
+			if (customer.PurchasedMovies.Any(x => x.Movie.Id == movie.Id && !x.ExpirationDate.IsExpired))
 			{
 				return BadRequest("The movie is already purchased: " + movie.Name);
 			}
