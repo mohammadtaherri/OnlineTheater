@@ -7,7 +7,6 @@ public class Customer : Entity
 	public CustomerName Name { get; set; } = default!;
 	public Email Email { get; private set; } = default!;
 	public CustomerStatus Status { get; set; }
-	public ExpirationDate StatusExpirationDate { get; set; } = default!;
 	public Dollars MoneySpent { get; private set; }
 
 	private readonly IList<PurchasedMovie> _purchasedMovies;
@@ -18,7 +17,6 @@ public class Customer : Entity
 		Name = name ?? throw new ArgumentNullException(nameof(name));
 		Email = email ?? throw new ArgumentNullException(nameof(email));
 		Status = CustomerStatus.Regular;
-		StatusExpirationDate = ExpirationDate.Infinite;
 		MoneySpent = Dollars.Of(0);
 
 		_purchasedMovies = new List<PurchasedMovie>();

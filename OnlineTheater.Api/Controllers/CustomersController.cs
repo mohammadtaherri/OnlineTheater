@@ -35,8 +35,8 @@ public class CustomersController : ControllerBase
 			Id = customer.Id,
 			Name = customer.Name,
 			Email = customer.Email,
-			Status = customer.Status.ToString(),
-			StatusExpirationDate = customer.StatusExpirationDate,
+			Status = customer.Status.Type.ToString(),
+			StatusExpirationDate = customer.Status.ExpirationDate,
 			MoneySpent = customer.MoneySpent,
 			PurchasedMovies = customer.PurchasedMovies.Select(pm => new PurchasedMovieDto
 			{
@@ -65,8 +65,8 @@ public class CustomersController : ControllerBase
 				Id = c.Id,
 				Name = c.Name,
 				Email = c.Email,
-				Status = c.Status.ToString(),
-				StatusExpirationDate = c.StatusExpirationDate,
+				Status = c.Status.Type.ToString(),
+				StatusExpirationDate = c.Status.ExpirationDate,
 				MoneySpent = c.MoneySpent,
 			})
 			.ToList();
@@ -179,7 +179,7 @@ public class CustomersController : ControllerBase
 				return BadRequest("Invalid customer id: " + id);
 			}
 
-			if (customer.Status == CustomerStatus.Advanced && !customer.StatusExpirationDate.IsExpired)
+			if (customer.Status.IsAdvanced)
 			{
 				return BadRequest("The customer already has the Advanced status");
 			}

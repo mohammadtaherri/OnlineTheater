@@ -39,10 +39,10 @@ public class OnlineTheaterDbContext : DbContext
                     dollars => dollars.Value,
 					dollars => Dollars.Create(dollars).Value);
 
-			x.Property(c => c.StatusExpirationDate)
-				.HasConversion(
-					expirationDate => expirationDate.Date,
-					expirationDate => (ExpirationDate)expirationDate); 
+			//x.Property(c => c.StatusExpirationDate)
+			//	.HasConversion(
+			//		expirationDate => expirationDate.Date,
+			//		expirationDate => (ExpirationDate)expirationDate); 
 		});
 
 		modelBuilder.Entity<PurchasedMovie>(x =>
