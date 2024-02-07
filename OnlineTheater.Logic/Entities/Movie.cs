@@ -1,45 +1,31 @@
 ﻿using OnlineTheater.Logic.ValueObjects;
-using System.Text.Json.Serialization;
 
 namespace OnlineTheater.Logic.Entities;
 
-public class Movie : Entity
+public abstract class Movie : Entity
 {
-	public string Name { get; private set; }
-	public LicensingModel LicensingModel { get; private set; }
+	public string Name { get; private set; } = default!;
 
-	public ExpirationDate ExpirationDate
-	{
-		get
-		{
-			switch (LicensingModel)
-			{
-				case LicensingModel.TwoDays:
-					return (ExpirationDate)DateTime.UtcNow.AddDays(2);
-
-				case LicensingModel.LifeLong:
-					return ExpirationDate.Infinite;
-
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
-		}
-		
-	}
+	public abstract ExpirationDate ExpirationDate { get; }
 
 	public Dollars CalculatePrice(CustomerStatus status)
 	{
-		decimal modifier = 1 - status.Discount;
-		switch (LicensingModel)
-		{
-			case LicensingModel.TwoDays:
-				return Dollars.Of(4) * modifier;
-
-			case LicensingModel.LifeLong:
-				return Dollars.Of(8) * modifier;
-
-			default:
-				throw new ArgumentOutOfRangeException();
-		}
+		return BasePrice * (1 - status.Discount);
 	}
+
+	protected abstract Dollars BasePrice { get; }
+}
+
+public class TwoDaysMovie : Movie
+{
+	public override ExpirationDate ExpirationDate => (ExpirationDate)DateTime.UtcNow.AddDays(2);
+
+	protected override Dollars BasePrice => Dollars.Of(4);
+}
+
+public class LifeLongMovie : Movie
+{
+	public override ExpirationDate ExpirationDate => ExpirationDate.Infinite;
+
+	protected override Dollars BasePrice => Dollars.Of(8);
 }
