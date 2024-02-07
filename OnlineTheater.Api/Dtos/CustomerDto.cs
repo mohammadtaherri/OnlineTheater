@@ -1,8 +1,4 @@
-﻿using OnlineTheater.Logic.Entities;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-
-namespace OnlineTheater.Api.Dtos;
+﻿namespace OnlineTheater.Api.Dtos;
 
 public class CustomerDto
 {

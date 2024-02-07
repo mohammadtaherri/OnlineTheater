@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineTheater.Api.Dtos;
+using OnlineTheater.FunctionalExtensions;
 using OnlineTheater.Logic.Entities;
 using OnlineTheater.Logic.Services;
 using OnlineTheater.Logic.Utils;
+using OnlineTheater.Logic.ValueObjects;
 
 namespace OnlineTheater.Api.Controllers;
 
@@ -76,23 +78,25 @@ public class CustomersController : ControllerBase
 	{
 		try
 		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
+			Result<CustomerName> customerNameOrError = CustomerName.Create(dto.Name);
+			Result<Email> emailOrError = Email.Create(dto.Email);
 
-			if (_unitOfWork.Customers.GetByEmail(dto.Email) is not null)
+			Result result = Result.Combine(customerNameOrError, emailOrError);
+			if (result.IsFailure)
+				return BadRequest(result.Error);
+
+			if (_unitOfWork.Customers.GetByEmail(emailOrError.Value) is not null)
 			{
 				return BadRequest("Email is already in use: " + dto.Email);
 			}
 
 			var newCustomer = new Customer
 			{
-				Name = dto.Name,
-				Email = dto.Email,
+				Name = customerNameOrError.Value,
+				Email = emailOrError.Value,
 				Status = CustomerStatus.Regular,
-				MoneySpent = 0,
-				StatusExpirationDate = null,
+				MoneySpent = Dollars.Of(0),
+				StatusExpirationDate = ExpirationDate.Infinite,
 			};
 
 			_unitOfWork.Customers.Add(newCustomer);
@@ -112,10 +116,9 @@ public class CustomersController : ControllerBase
 	{
 		try
 		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
+			Result<CustomerName> customerNameOrError = CustomerName.Create(dto.Name);
+			if (customerNameOrError.IsFailure)
+				return BadRequest(customerNameOrError.Error);
 
 			Customer? customer = _unitOfWork.Customers.GetById(id);
 			if (customer is null)
@@ -123,7 +126,7 @@ public class CustomersController : ControllerBase
 				return BadRequest("Invalid customer id: " + id);
 			}
 
-			customer.Name = dto.Name;
+			customer.Name = customerNameOrError.Value;
 			_unitOfWork.SaveChanges();
 
 			return Ok();
@@ -152,7 +155,7 @@ public class CustomersController : ControllerBase
 				return BadRequest("Invalid customer id: " + id);
 			}
 
-			if (customer.PurchasedMovies.Any(x => x.MovieId == movie.Id && (x.ExpirationDate == null || x.ExpirationDate.Value >= DateTime.UtcNow)))
+			if (customer.PurchasedMovies.Any(x => x.MovieId == movie.Id && !x.ExpirationDate.IsExpired))
 			{
 				return BadRequest("The movie is already purchased: " + movie.Name);
 			}
@@ -181,7 +184,7 @@ public class CustomersController : ControllerBase
 				return BadRequest("Invalid customer id: " + id);
 			}
 
-			if (customer.Status == CustomerStatus.Advanced && (customer.StatusExpirationDate == null || customer.StatusExpirationDate.Value < DateTime.UtcNow))
+			if (customer.Status == CustomerStatus.Advanced && !customer.StatusExpirationDate.IsExpired)
 			{
 				return BadRequest("The customer already has the Advanced status");
 			}

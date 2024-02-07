@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OnlineTheater.Logic.Entities;
+﻿using OnlineTheater.Logic.Entities;
 using OnlineTheater.Logic.Utils;
+using OnlineTheater.Logic.ValueObjects;
 
 namespace OnlineTheater.Logic.Repositories;
 
@@ -16,7 +16,7 @@ public class CustomerRepository : Repository<Customer>
 		return _dbSet.ToList();
 	}
 
-	public Customer? GetByEmail(string email)
+	public Customer? GetByEmail(Email email)
 	{
 		return _dbSet.SingleOrDefault(c => c.Email == email);
 	}

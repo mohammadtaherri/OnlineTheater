@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OnlineTheater.FunctionalExtensions\OnlineTheater.FunctionalExtensions.csproj" />
     <ProjectReference Include="..\OnlineTheater.Logic\OnlineTheater.Logic.csproj" />
   </ItemGroup>
 

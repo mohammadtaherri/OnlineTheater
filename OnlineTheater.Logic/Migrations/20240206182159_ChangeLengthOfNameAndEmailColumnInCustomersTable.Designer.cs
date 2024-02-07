@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineTheater.Logic.Utils;
 
@@ -11,9 +12,11 @@ using OnlineTheater.Logic.Utils;
 namespace OnlineTheater.Logic.Migrations
 {
     [DbContext(typeof(OnlineTheaterDbContext))]
-    partial class OnlineTheaterDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240206182159_ChangeLengthOfNameAndEmailColumnInCustomersTable")]
+    partial class ChangeLengthOfNameAndEmailColumnInCustomersTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,7 +54,7 @@ namespace OnlineTheater.Logic.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("OnlineTheater.Logic.Entities.Movie", b =>
@@ -71,7 +74,7 @@ namespace OnlineTheater.Logic.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Movies", (string)null);
+                    b.ToTable("Movies");
                 });
 
             modelBuilder.Entity("OnlineTheater.Logic.Entities.PurchasedMovie", b =>
@@ -103,7 +106,7 @@ namespace OnlineTheater.Logic.Migrations
 
                     b.HasIndex("MovieId");
 
-                    b.ToTable("PurchasedMovie", (string)null);
+                    b.ToTable("PurchasedMovie");
                 });
 
             modelBuilder.Entity("OnlineTheater.Logic.Entities.PurchasedMovie", b =>
