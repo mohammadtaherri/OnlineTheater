@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using OnlineTheater.Api.Utils;
 using OnlineTheater.Logic.Services;
 using OnlineTheater.Logic.Utils;
 
@@ -23,6 +24,8 @@ if (app.Environment.IsDevelopment())
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandler>();
 
 app.UseHttpsRedirection();
 

@@ -71,127 +71,99 @@ public class CustomersController : ControllerBase
 	[HttpPost]
 	public IActionResult Create([FromBody] CreateCustomerDto dto)
 	{
-		try
+		Result<CustomerName> customerNameOrError = CustomerName.Create(dto.Name);
+		Result<Email> emailOrError = Email.Create(dto.Email);
+
+		Result result = Result.Combine(customerNameOrError, emailOrError);
+		if (result.IsFailure)
+			return BadRequest(result.Error);
+
+		if (_unitOfWork.Customers.GetByEmail(emailOrError.Value) is not null)
 		{
-			Result<CustomerName> customerNameOrError = CustomerName.Create(dto.Name);
-			Result<Email> emailOrError = Email.Create(dto.Email);
-
-			Result result = Result.Combine(customerNameOrError, emailOrError);
-			if (result.IsFailure)
-				return BadRequest(result.Error);
-
-			if (_unitOfWork.Customers.GetByEmail(emailOrError.Value) is not null)
-			{
-				return BadRequest("Email is already in use: " + dto.Email);
-			}
-
-			var newCustomer = new Customer(
-				customerNameOrError.Value, 
-				emailOrError.Value);
-
-			_unitOfWork.Customers.Add(newCustomer);
-			_unitOfWork.SaveChanges();
-
-			return Ok();
+			return BadRequest("Email is already in use: " + dto.Email);
 		}
-		catch (Exception e)
-		{
-			return StatusCode(500, new { error = e.Message });
-		}
+
+		var newCustomer = new Customer(
+			customerNameOrError.Value, 
+			emailOrError.Value);
+
+		_unitOfWork.Customers.Add(newCustomer);
+		_unitOfWork.SaveChanges();
+
+		return Ok();
 	}
 
 	[HttpPut]
 	[Route("{id:long}")]
 	public IActionResult Update([FromRoute] long id, [FromBody] UpdateCustomerDto dto)
 	{
-		try
+		Result<CustomerName> customerNameOrError = CustomerName.Create(dto.Name);
+		if (customerNameOrError.IsFailure)
+			return BadRequest(customerNameOrError.Error);
+
+		Customer? customer = _unitOfWork.Customers.GetById(id);
+		if (customer is null)
 		{
-			Result<CustomerName> customerNameOrError = CustomerName.Create(dto.Name);
-			if (customerNameOrError.IsFailure)
-				return BadRequest(customerNameOrError.Error);
-
-			Customer? customer = _unitOfWork.Customers.GetById(id);
-			if (customer is null)
-			{
-				return BadRequest("Invalid customer id: " + id);
-			}
-
-			customer.Name = customerNameOrError.Value;
-			_unitOfWork.SaveChanges();
-
-			return Ok();
+			return BadRequest("Invalid customer id: " + id);
 		}
-		catch (Exception e)
-		{
-			return StatusCode(500, new { error = e.Message });
-		}
+
+		customer.Name = customerNameOrError.Value;
+		_unitOfWork.SaveChanges();
+
+		return Ok();
 	}
 
 	[HttpPost]
 	[Route("{id:long}/movies")]
 	public IActionResult PurchaseMovie([FromRoute] long id, [FromBody] long movieId)
 	{
-		try
+		Movie? movie = _unitOfWork.Movies.GetById(movieId);
+		if (movie is null)
 		{
-			Movie? movie = _unitOfWork.Movies.GetById(movieId);
-			if (movie is null)
-			{
-				return BadRequest("Invalid movie id: " + movieId);
-			}
-
-			Customer? customer = _unitOfWork.Customers.GetById(id);
-			if (customer is null)
-			{
-				return BadRequest("Invalid customer id: " + id);
-			}
-
-			if (customer.PurchasedMovies.Any(x => x.Movie.Id == movie.Id && !x.ExpirationDate.IsExpired))
-			{
-				return BadRequest("The movie is already purchased: " + movie.Name);
-			}
-
-			customer.PurchaseMovie(movie);
-
-			_unitOfWork.SaveChanges();
-
-			return Ok();
+			return BadRequest("Invalid movie id: " + movieId);
 		}
-		catch (Exception e)
+
+		Customer? customer = _unitOfWork.Customers.GetById(id);
+		if (customer is null)
 		{
-			return StatusCode(500, new { error = e.Message });
+			return BadRequest("Invalid customer id: " + id);
 		}
+
+		if (customer.PurchasedMovies.Any(x => x.Movie.Id == movie.Id && !x.ExpirationDate.IsExpired))
+		{
+			return BadRequest("The movie is already purchased: " + movie.Name);
+		}
+
+		customer.PurchaseMovie(movie);
+
+		_unitOfWork.SaveChanges();
+
+		return Ok();
 	}
 
 	[HttpPost]
 	[Route("{id:long}/promotion")]
 	public IActionResult PromoteCustomer([FromRoute] long id)
 	{
-		try
+		Customer? customer = _unitOfWork.Customers.GetById(id);
+		if (customer is null)
 		{
-			Customer? customer = _unitOfWork.Customers.GetById(id);
-			if (customer is null)
-			{
-				return BadRequest("Invalid customer id: " + id);
-			}
-
-			if (customer.Status.IsAdvanced)
-			{
-				return BadRequest("The customer already has the Advanced status");
-			}
-
-			bool success = customer.Promote();
-			if (!success)
-			{
-				return BadRequest("Cannot promote the customer");
-			}
-
-			_unitOfWork.SaveChanges();
-
-			return Ok();
+			return BadRequest("Invalid customer id: " + id);
 		}
-		catch (Exception e)
+
+		if (customer.Status.IsAdvanced)
 		{
-			return StatusCode(500, new { error = e.Message });
+			return BadRequest("The customer already has the Advanced status");
 		}
+
+		bool success = customer.Promote();
+		if (!success)
+		{
+			return BadRequest("Cannot promote the customer");
+		}
+
+		_unitOfWork.SaveChanges();
+
+		return Ok();
 	}
 }
