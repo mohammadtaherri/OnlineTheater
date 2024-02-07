@@ -15,6 +15,8 @@ public class CustomerStatus : ValueObject<CustomerStatus>
 		CustomerStatusType.Advanced && 
 		!ExpirationDate.IsExpired;
 
+	public decimal Discount => IsAdvanced ? 0.25m : 0;
+
 	private CustomerStatus(CustomerStatusType type, ExpirationDate expirationDate)
 	{
 		Type = type;

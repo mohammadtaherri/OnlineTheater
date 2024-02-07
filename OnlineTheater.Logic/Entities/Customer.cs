@@ -22,10 +22,12 @@ public class Customer : Entity
 		_purchasedMovies = new List<PurchasedMovie>();
 	}
 
-	public void AddPurchasedMovie(Movie movie, ExpirationDate expirationDate, Dollars price)
+	public void PurchaseMovie(Movie movie)
 	{
-		var purchasedMovie = new PurchasedMovie(movie, this, price, expirationDate);
-		_purchasedMovies.Add(purchasedMovie);
+		ExpirationDate expirationDate = movie.ExpirationDate;
+		Dollars price = movie.CalculatePrice(Status);
+
+		_purchasedMovies.Add(new PurchasedMovie(movie, this, price, expirationDate));
 		MoneySpent += price;
 	}
 

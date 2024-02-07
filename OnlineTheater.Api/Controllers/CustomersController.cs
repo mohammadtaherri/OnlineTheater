@@ -2,7 +2,6 @@
 using OnlineTheater.Api.Dtos;
 using OnlineTheater.FunctionalExtensions;
 using OnlineTheater.Logic.Entities;
-using OnlineTheater.Logic.Services;
 using OnlineTheater.Logic.Utils;
 using OnlineTheater.Logic.ValueObjects;
 
@@ -12,14 +11,10 @@ namespace OnlineTheater.Api.Controllers;
 public class CustomersController : ControllerBase
 {
 	private readonly UnitOfWork _unitOfWork;
-	private readonly CustomerService _customerService;
 
-	public CustomersController(
-		UnitOfWork unitOfWork,
-		CustomerService customerService)
+	public CustomersController(UnitOfWork unitOfWork)
 	{
 		_unitOfWork = unitOfWork;
-		_customerService = customerService;
 	}
 
 	[HttpGet]
@@ -155,7 +150,7 @@ public class CustomersController : ControllerBase
 				return BadRequest("The movie is already purchased: " + movie.Name);
 			}
 
-			_customerService.PurchaseMovie(customer, movie);
+			customer.PurchaseMovie(movie);
 
 			_unitOfWork.SaveChanges();
 

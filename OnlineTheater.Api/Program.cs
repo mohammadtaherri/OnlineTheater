@@ -14,8 +14,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<UnitOfWork>();
-builder.Services.AddTransient<MovieService>();
-builder.Services.AddTransient<CustomerService>();
 
 var app = builder.Build();
 
