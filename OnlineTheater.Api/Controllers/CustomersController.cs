@@ -79,9 +79,7 @@ public class CustomersController : ControllerBase
 			return BadRequest(result.Error);
 
 		if (_unitOfWork.Customers.GetByEmail(emailOrError.Value) is not null)
-		{
 			return BadRequest("Email is already in use: " + dto.Email);
-		}
 
 		var newCustomer = new Customer(
 			customerNameOrError.Value, 
@@ -103,9 +101,7 @@ public class CustomersController : ControllerBase
 
 		Customer? customer = _unitOfWork.Customers.GetById(id);
 		if (customer is null)
-		{
 			return BadRequest("Invalid customer id: " + id);
-		}
 
 		customer.Name = customerNameOrError.Value;
 		_unitOfWork.SaveChanges();
@@ -119,20 +115,14 @@ public class CustomersController : ControllerBase
 	{
 		Movie? movie = _unitOfWork.Movies.GetById(movieId);
 		if (movie is null)
-		{
 			return BadRequest("Invalid movie id: " + movieId);
-		}
-
+		
 		Customer? customer = _unitOfWork.Customers.GetById(id);
 		if (customer is null)
-		{
 			return BadRequest("Invalid customer id: " + id);
-		}
 
-		if (customer.PurchasedMovies.Any(x => x.Movie.Id == movie.Id && !x.ExpirationDate.IsExpired))
-		{
+		if (customer.CanPurchasedMovie(movie))
 			return BadRequest("The movie is already purchased: " + movie.Name);
-		}
 
 		customer.PurchaseMovie(movie);
 
@@ -147,20 +137,13 @@ public class CustomersController : ControllerBase
 	{
 		Customer? customer = _unitOfWork.Customers.GetById(id);
 		if (customer is null)
-		{
 			return BadRequest("Invalid customer id: " + id);
-		}
 
-		if (customer.Status.IsAdvanced)
-		{
-			return BadRequest("The customer already has the Advanced status");
-		}
+		Result promotionCheck = customer.CanPromote();
+		if (promotionCheck.IsFailure)
+			return BadRequest(promotionCheck.Error);
 
-		bool success = customer.Promote();
-		if (!success)
-		{
-			return BadRequest("Cannot promote the customer");
-		}
+		customer.Promote();
 
 		_unitOfWork.SaveChanges();
 

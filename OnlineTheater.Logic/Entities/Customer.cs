@@ -1,4 +1,5 @@
-﻿using OnlineTheater.Logic.ValueObjects;
+﻿using OnlineTheater.FunctionalExtensions;
+using OnlineTheater.Logic.ValueObjects;
 
 namespace OnlineTheater.Logic.Entities;
 
@@ -22,27 +23,45 @@ public class Customer : Entity
 		_purchasedMovies = new List<PurchasedMovie>();
 	}
 
-	public void PurchaseMovie(Movie movie)
+	public virtual bool CanPurchasedMovie(Movie movie)
 	{
+		return PurchasedMovies.Any(x => x.Movie == movie && !x.ExpirationDate.IsExpired);
+	}
+
+	public virtual void PurchaseMovie(Movie movie)
+	{
+		if (CanPurchasedMovie(movie))
+			throw new Exception();
+
 		ExpirationDate expirationDate = movie.ExpirationDate;
 		Dollars price = movie.CalculatePrice(Status);
 
-		_purchasedMovies.Add(new PurchasedMovie(movie, this, price, expirationDate));
+		var purchasedMovie = new PurchasedMovie(movie, this, price, expirationDate);
+		_purchasedMovies.Add(purchasedMovie);
+
 		MoneySpent += price;
 	}
 
-	public bool Promote()
+	public virtual Result CanPromote()
 	{
-		// at least 2 active movies during the last 30 days
-		if (PurchasedMovies.Count(x => x.ExpirationDate == ExpirationDate.Infinite || x.ExpirationDate.Date >= DateTime.UtcNow.AddDays(-30)) < 2)
-			return false;
+		if (Status.IsAdvanced)
+			return Result.Fail("The customer already has the Advanced status");
 
-		// at least 100 dollars spent during the last year
+		if (PurchasedMovies.Count(x =>
+			x.ExpirationDate == ExpirationDate.Infinite || x.ExpirationDate.Date >= DateTime.UtcNow.AddDays(-30)) < 2)
+			return Result.Fail("The customer has to have at least 2 active movies during the last 30 days");
+
 		if (PurchasedMovies.Where(x => x.PurchaseDate > DateTime.UtcNow.AddYears(-1)).Sum(x => x.Price) < 100m)
-			return false;
+			return Result.Fail("The customer has to have at least 100 dollars spent during the last year");
+
+		return Result.Ok();
+	}
+
+	public virtual void Promote()
+	{
+		if (CanPromote().IsFailure)
+			throw new Exception();
 
 		Status = Status.Promote();
-
-		return true;
 	}
 }
