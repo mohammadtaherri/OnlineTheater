@@ -4,9 +4,9 @@ namespace OnlineTheater.Logic.Entities;
 
 public class Customer : Entity
 {
-	public CustomerName Name { get; set; } = default!;
-	public Email Email { get; private set; } = default!;
-	public CustomerStatus Status { get; set; }
+	public CustomerName Name { get; set; }
+	public Email Email { get; }
+	public CustomerStatus Status { get; private set; }
 	public Dollars MoneySpent { get; private set; }
 
 	private readonly IList<PurchasedMovie> _purchasedMovies;
