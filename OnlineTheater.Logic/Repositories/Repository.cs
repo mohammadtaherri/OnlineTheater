@@ -7,20 +7,20 @@ namespace OnlineTheater.Logic.Repositories;
 public abstract class Repository<TEntity>
 		where TEntity : Entity
 {
-	protected readonly DbSet<TEntity> _dbSet;
+	protected readonly OnlineTheaterDbContext _dbContext;
 
 	protected Repository(OnlineTheaterDbContext dbContext)
 	{
-		_dbSet = dbContext.Set<TEntity>();
+		_dbContext = dbContext;
 	}
 
 	public TEntity? GetById(long id)
 	{
-		return _dbSet.Find(id);
+		return _dbContext.Set<TEntity>().Find(id);
 	}
 
 	public void Add(TEntity entity)
 	{
-		_dbSet.Add(entity);
+		__dbContext.Set<TEntity>().Add(entity);
 	}
 }

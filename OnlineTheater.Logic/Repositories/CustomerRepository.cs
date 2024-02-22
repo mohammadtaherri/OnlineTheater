@@ -13,11 +13,13 @@ public class CustomerRepository : Repository<Customer>
 
 	public IReadOnlyList<Customer> GetAll()
 	{
-		return _dbSet.ToList();
+		return _dbContext.Customers
+			.ToList();
 	}
 
 	public Customer? GetByEmail(Email email)
 	{
-		return _dbSet.SingleOrDefault(c => c.Email == email);
+		return _dbContext.Customers
+			.SingleOrDefault(c => c.Email == email);
 	}
 }

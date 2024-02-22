@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using OnlineTheater.Api.Dtos;
 using OnlineTheater.FunctionalExtensions;
 using OnlineTheater.Logic.Entities;

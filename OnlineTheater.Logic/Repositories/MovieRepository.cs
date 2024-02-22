@@ -13,6 +13,7 @@ public class MovieRepository : Repository<Movie>
 
 	public IReadOnlyList<Movie> GetAll()
 	{
-		return _dbSet.ToList();
+		return _dbContext.Movies
+			.ToList();
 	}
 }
