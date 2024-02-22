@@ -86,7 +86,7 @@ public class CustomersController : ControllerBase
 			emailOrError.Value);
 
 		_unitOfWork.Customers.Add(newCustomer);
-		_unitOfWork.SaveChanges();
+		_unitOfWork.Complete();
 
 		return Ok();
 	}
@@ -104,7 +104,7 @@ public class CustomersController : ControllerBase
 			return BadRequest("Invalid customer id: " + id);
 
 		customer.Name = customerNameOrError.Value;
-		_unitOfWork.SaveChanges();
+		_unitOfWork.Complete();
 
 		return Ok();
 	}
@@ -126,7 +126,7 @@ public class CustomersController : ControllerBase
 
 		customer.PurchaseMovie(movie);
 
-		_unitOfWork.SaveChanges();
+		_unitOfWork.Complete();
 
 		return Ok();
 	}
@@ -145,7 +145,7 @@ public class CustomersController : ControllerBase
 
 		customer.Promote();
 
-		_unitOfWork.SaveChanges();
+		_unitOfWork.Complete();
 
 		return Ok();
 	}

@@ -19,7 +19,7 @@ public class UnitOfWork : IDisposable
     public MovieRepository Movies =>
         _movieRepository ??= new MovieRepository(_dbContext);   
 
-    public void SaveChanges()
+    public void Complete()
     {
         _dbContext.SaveChanges();
     }

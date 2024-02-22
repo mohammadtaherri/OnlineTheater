@@ -14,13 +14,13 @@ public class UnitofWorkController : ControllerBase
 
 	protected new IActionResult Ok()
 	{
-		_unitOfWork.SaveChanges();
+		_unitOfWork.Complete();
 		return base.Ok(); ;
 	}
 
 	protected new IActionResult Ok<T>(T result)
 	{
-		_unitOfWork.SaveChanges();
+		_unitOfWork.Complete();
 		return base.Ok(result); ;
 	}
 }
