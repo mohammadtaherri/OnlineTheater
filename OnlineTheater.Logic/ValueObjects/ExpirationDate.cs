@@ -30,12 +30,12 @@ public class ExpirationDate : ValueObject<ExpirationDate>
 		return Date.GetHashCode();
 	}
 
-	public static implicit operator DateTime?(ExpirationDate date)
+	public static implicit operator DateTime? (ExpirationDate date)
 	{
 		return date.Date;
 	}
 
-	public static explicit operator ExpirationDate(DateTime? date)
+	public static explicit operator ExpirationDate (DateTime? date)
 	{
 		if (date.HasValue)
 			return Create(date.Value).Value;

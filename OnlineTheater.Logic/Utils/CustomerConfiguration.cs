@@ -35,7 +35,7 @@ internal class CustomerConfiguration : IEntityTypeConfiguration<Customer>
 			statusBuilder.Property(s => s.ExpirationDate)
 				.HasConversion(
 					expirationDate => expirationDate.Date,
-					expirationDate => (ExpirationDate)expirationDate)
+					expirationDate => (ExpirationDate) expirationDate)
 				.HasColumnName("StatusExpirationDate")
 				.IsRequired(false);
 		});

@@ -21,6 +21,6 @@ public abstract class Repository<TEntity>
 
 	public void Add(TEntity entity)
 	{
-		__dbContext.Set<TEntity>().Add(entity);
+		_dbContext.Set<TEntity>().Add(entity);
 	}
 }

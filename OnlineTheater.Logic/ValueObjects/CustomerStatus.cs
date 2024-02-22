@@ -7,9 +7,7 @@ public class CustomerStatus : ValueObject<CustomerStatus>
 		ExpirationDate.Infinite);
 
     public CustomerStatusType Type { get; }
-
-	private readonly DateTime? _expirationDate;
-	public ExpirationDate ExpirationDate => (ExpirationDate)_expirationDate;
+	public ExpirationDate ExpirationDate { get; }
 
 	public bool IsAdvanced => Type == 
 		CustomerStatusType.Advanced && 
@@ -17,11 +15,10 @@ public class CustomerStatus : ValueObject<CustomerStatus>
 
 	public decimal Discount => IsAdvanced ? 0.25m : 0;
 
-	private CustomerStatus(CustomerStatusType type, ExpirationDate expirationDate)
+	private CustomerStatus(CustomerStatusType type, ExpirationDate? expirationDate)
 	{
 		Type = type;
-		_expirationDate = expirationDate 
-			?? throw new ArgumentNullException(nameof(expirationDate));
+		ExpirationDate = expirationDate ?? ExpirationDate.Infinite;
 	}
 
 	public CustomerStatus Promote()
