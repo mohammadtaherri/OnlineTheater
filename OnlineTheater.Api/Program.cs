@@ -1,12 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using OnlineTheater.Api.Utils;
-using OnlineTheater.Logic.Services;
 using OnlineTheater.Logic.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddDbContext<OnlineTheaterDbContext>(
 	options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using OnlineTheater.Api.Dtos;
 using OnlineTheater.FunctionalExtensions;
 using OnlineTheater.Logic.Entities;
@@ -121,7 +122,7 @@ public class CustomersController : ControllerBase
 		if (customer is null)
 			return BadRequest("Invalid customer id: " + id);
 
-		if (customer.CanPurchasedMovie(movie))
+		if (customer.CanPurchaseMovie(movie))
 			return BadRequest("The movie is already purchased: " + movie.Name);
 
 		customer.PurchaseMovie(movie);

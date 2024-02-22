@@ -30,7 +30,7 @@ public class Customer : Entity
 
 	public void PurchaseMovie(Movie movie)
 	{
-		if (CanPurchasedMovie(movie))
+		if (CanPurchaseMovie(movie))
 			throw new Exception();
 
 		ExpirationDate expirationDate = movie.ExpirationDate;
