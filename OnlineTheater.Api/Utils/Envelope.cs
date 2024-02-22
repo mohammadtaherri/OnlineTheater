@@ -2,11 +2,11 @@
 
 public class Envelope<T>
 {
-	public T Result { get; }
-	public string ErrorMessage { get; }
+	public T? Result { get; }
+	public string? ErrorMessage { get; }
 	public DateTime TimeGenerated { get; }
 
-	protected internal Envelope(T result, string errorMessage)
+	protected internal Envelope(T? result, string? errorMessage)
 	{
 		Result = result;
 		ErrorMessage = errorMessage;
@@ -16,7 +16,7 @@ public class Envelope<T>
 
 public class Envelope : Envelope<string>
 {
-	protected Envelope(string errorMessage)
+	protected Envelope(string? errorMessage)
 		: base(null, errorMessage)
 	{
 	}

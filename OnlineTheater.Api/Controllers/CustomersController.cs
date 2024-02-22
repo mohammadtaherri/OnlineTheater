@@ -8,11 +8,11 @@ using OnlineTheater.Logic.ValueObjects;
 namespace OnlineTheater.Api.Controllers;
 
 [Route("api/[controller]")]
-public class CustomersController : ControllerBase
+public class CustomersController : ApiController
 {
 	private readonly UnitOfWork _unitOfWork;
 
-	public CustomersController(UnitOfWork unitOfWork)
+	public CustomersController(UnitOfWork unitOfWork) : base(unitOfWork)
 	{
 		_unitOfWork = unitOfWork;
 	}
@@ -86,9 +86,8 @@ public class CustomersController : ControllerBase
 			emailOrError.Value);
 
 		_unitOfWork.Customers.Add(newCustomer);
-		_unitOfWork.Complete();
 
-		return Ok();
+		return CreatedAtAction(nameof(GetById), new { Id = newCustomer.Id});
 	}
 
 	[HttpPut]
@@ -104,9 +103,8 @@ public class CustomersController : ControllerBase
 			return BadRequest("Invalid customer id: " + id);
 
 		customer.Name = customerNameOrError.Value;
-		_unitOfWork.Complete();
 
-		return Ok();
+		return NoContent();
 	}
 
 	[HttpPost]
@@ -126,8 +124,6 @@ public class CustomersController : ControllerBase
 
 		customer.PurchaseMovie(movie);
 
-		_unitOfWork.Complete();
-
 		return Ok();
 	}
 
@@ -144,8 +140,6 @@ public class CustomersController : ControllerBase
 			return BadRequest(promotionCheck.Error);
 
 		customer.Promote();
-
-		_unitOfWork.Complete();
 
 		return Ok();
 	}
