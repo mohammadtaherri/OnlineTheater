@@ -1,4 +1,5 @@
-﻿using OnlineTheater.Logic.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using OnlineTheater.Logic.Entities;
 using OnlineTheater.Logic.Utils;
 using OnlineTheater.Logic.ValueObjects;
 
@@ -9,6 +10,14 @@ public class CustomerRepository : Repository<Customer>
 	public CustomerRepository(OnlineTheaterDbContext dbContext)
 		: base(dbContext)
 	{
+	}
+
+	public override Customer? GetById(long id)
+	{
+		return _dbContext.Customers
+			.Include(c => c.PurchasedMovies)
+			.ThenInclude(pm => pm.Movie)
+			.SingleOrDefault(c => c.Id == id);
 	}
 
 	public IReadOnlyList<Customer> GetAll()

@@ -14,7 +14,7 @@ public abstract class Repository<TEntity>
 		_dbContext = dbContext;
 	}
 
-	public TEntity? GetById(long id)
+	public virtual TEntity? GetById(long id)
 	{
 		return _dbContext.Set<TEntity>().Find(id);
 	}
