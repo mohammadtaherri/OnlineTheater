@@ -10,6 +10,8 @@ public class PurchasedMovie : Entity
 	public DateTime PurchaseDate { get; private set; }
 	public ExpirationDate ExpirationDate { get; private set; }
 
+	private PurchasedMovie() { }
+
 	internal PurchasedMovie(Movie movie, Customer customer, Dollars price, ExpirationDate expirationDate)
 	{
 		if (price is null || price.IsZero)

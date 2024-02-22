@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineTheater.Logic.Utils;
 
@@ -11,9 +12,11 @@ using OnlineTheater.Logic.Utils;
 namespace OnlineTheater.Logic.Migrations
 {
     [DbContext(typeof(OnlineTheaterDbContext))]
-    partial class OnlineTheaterDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240222121937_RenameMoviesTableToMovie")]
+    partial class RenameMoviesTableToMovie
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
