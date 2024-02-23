@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using OnlineTheater.Api.Utils;
-using OnlineTheater.Logic.Utils;
+using OnlineTheater.Api.Base;
+using OnlineTheater.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
